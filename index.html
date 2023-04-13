@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MONUMENT</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+    <link href="/main.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">MONUMENT</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="record.html">기록</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="remember.html">기억</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <main class="main">
+      <div class="record">
+        <button
+          type="button"
+          class="btn btn-light"
+          onClick="location.href='record.html'"
+        >
+          기록하기
+        </button>
+      </div>
+      <br />
+      <div class="remember">
+        <button
+          type="button"
+          class="btn btn-light"
+          onClick="location.href='remember.html'"
+        >
+          기억하기
+        </button>
+      </div>
+    </main>
+
+    <script
+      src="https://code.jquery.com/jquery-3.6.4.min.js"
+      integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/__/firebase/8.6.5/firebase-app.js"></script>
+    <script src="/__/firebase/8.6.5/firebase-auth.js"></script>
+    <script src="/__/firebase/8.6.5/firebase-firestore.js"></script>
+    <script src="/__/firebase/8.6.5/firebase-storage.js"></script>
+    <script>
+      var firebaseConfig = {
+        apiKey: "AIzaSyBmIDR1mtTBePpyAYYfj7IwEYy0EF1oRJ4",
+        authDomain: "monument-eb79e.firebaseapp.com",
+        projectId: "monument-eb79e",
+        storageBucket: "monument-eb79e.appspot.com",
+        messagingSenderId: "90449775086",
+        appId: "1:90449775086:web:9a8a9e6e1ce82169c4a6ff",
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+  </body>
+</html>

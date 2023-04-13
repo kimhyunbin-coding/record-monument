@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MONUMENT</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+      crossorigin="anonymous"
+    />
+
+    <link href="remember.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">MONUMENT</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link nav-record" href="record.html">기록</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link nav-remember active" href="remember.html"
+                >기억</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="search">
+      <p class="search_text">SEARCH</p>
+      <input
+        onkeyup="search_wine()"
+        type="text"
+        id="value"
+        placeholder="Wine to Search"
+      />
+      <input
+        onkeyup="search_type()"
+        type="text"
+        id="value1"
+        placeholder="Type to Search"
+      />
+      <input
+        onkeyup="search_place()"
+        type="text"
+        id="value2"
+        placeholder="Place to Search"
+      />
+    </div>
+    <div class="container mt-3" style="cursor: pointer"></div>
+    <script
+      src="https://code.jquery.com/jquery-3.6.4.min.js"
+      integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/__/firebase/8.6.5/firebase-app.js"></script>
+    <script src="/__/firebase/8.6.5/firebase-auth.js"></script>
+    <script src="/__/firebase/8.6.5/firebase-firestore.js"></script>
+    <script src="/__/firebase/8.6.5/firebase-storage.js"></script>
+    <script>
+      var firebaseConfig = {
+        apiKey: "AIzaSyBmIDR1mtTBePpyAYYfj7IwEYy0EF1oRJ4",
+        authDomain: "monument-eb79e.firebaseapp.com",
+        projectId: "monument-eb79e",
+        storageBucket: "monument-eb79e.appspot.com",
+        messagingSenderId: "90449775086",
+        appId: "1:90449775086:web:9a8a9e6e1ce82169c4a6ff",
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+    <script defer>
+      const db = firebase.firestore();
+      db.collection("product")
+        .orderBy("날짜", "desc")
+        .get()
+        .then((결과) => {
+          console.log(결과);
+          결과.forEach((doc) => {
+            var 템플릿 = `<div class="product" style="box-shadow : 3px 3px 3px 3px lightgray; border-radius : 5px; margin-bottom : 20px;">
+          <div
+            class="thumbnail"
+            style="background-image: url('${doc.data().이미지}'); width : 30%"
+          ></div>
+          <div class="flex-grow-1 p-4">
+            <h5 class="title">${doc.data().이름}</h5>
+            <h5 class="type">${doc.data().타입}</h5>
+            <h5 class="place">${doc.data().장소}</h5>
+            <p class="date">${doc.data().날짜}</p>
+            <p class="price">${doc.data().가격}</p>
+            <button type="button" class="float-end delete btn btn-danger" data-id="${
+              doc.id
+            }">삭제</button>
+          </div>
+        </div>
+       `;
+            $(".container").append(템플릿);
+            $(".delete").click((e) => {
+              e.stopPropagation();
+              var productId = $(".delete").data("id");
+              console.log(productId);
+              db.collection("product")
+                .doc(productId)
+                .delete()
+                .then(() => {
+                  // 삭제 성공 시 해당 게시물 요소 제거하기
+                  $(this).closest(".product").remove();
+                  location.reload(); // 페이지 새로고침
+                  console.log("Document successfully deleted!");
+                })
+                .catch((error) => {
+                  console.error("에러는 ", error);
+                });
+            });
+
+            // 클릭 이벤트 핸들러 추가
+            $(`.product:eq(${결과.docs.indexOf(doc)})`).click(() => {
+              const 게시물정보 = {
+                이미지: doc.data().이미지,
+                이름: doc.data().이름,
+                타입: doc.data().타입,
+                장소: doc.data().장소,
+                날짜: doc.data().날짜,
+                가격: doc.data().가격,
+                내용: doc.data().내용,
+              };
+              // 팝업창 열기 함수 호출
+              openPopup(게시물정보);
+            });
+          });
+        });
+
+      // 팝업창 열기 함수 정의
+      function openPopup(게시물정보) {
+        const 팝업창 = `
+          <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);">
+            <div style="position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%); width: 350px; height: 400px; background-color: white;">
+            <div style="line-height:30px; padding : 30px; width : 100%; height : 100%; resize: none; white-space: pre-line; overflow-y: auto; padding-bottom : 10px; font-weight: bold;">${게시물정보.내용}</div>
+              <button id="closePopup" style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); border : none; border-radius : 5px; background-color : light-gray; padding-left : 90px; padding-right : 90px; font-size : 16px; box-shadow : 3px 3px 3px 3px gray;">CLOSE</button>
+            </div>
+          </div>`;
+        $("body").append(팝업창);
+
+        $("#closePopup").click(function () {
+          $(this).parent().parent().remove();
+        });
+      }
+    </script>
+
+    <!-- 검색기능 -->
+
+    <script>
+      function search_wine() {
+        let value, name, item;
+
+        value = document.getElementById("value").value.toUpperCase();
+        item = document.getElementsByClassName("product");
+
+        for (let i = 0; i < item.length; i++) {
+          name = item[i].getElementsByClassName("title");
+          if (name[0].innerHTML.toUpperCase().indexOf(value) > -1) {
+            item[i].style.display = "flex";
+          } else {
+            item[i].style.display = "none";
+          }
+        }
+      }
+
+      function search_type() {
+        let value1, name1, item1;
+
+        value1 = document.getElementById("value1").value.toUpperCase();
+        item1 = document.getElementsByClassName("product");
+
+        for (let i = 0; i < item1.length; i++) {
+          name1 = item1[i].getElementsByClassName("type");
+          if (name1[0].innerHTML.toUpperCase().indexOf(value1) > -1) {
+            item1[i].style.display = "flex";
+          } else {
+            item1[i].style.display = "none";
+          }
+        }
+      }
+
+      function search_place() {
+        let value2, name2, item2;
+
+        value2 = document.getElementById("value2").value.toUpperCase();
+        item2 = document.getElementsByClassName("product");
+
+        for (let i = 0; i < item2.length; i++) {
+          name2 = item2[i].getElementsByClassName("place");
+          if (name2[0].innerHTML.toUpperCase().indexOf(value2) > -1) {
+            item2[i].style.display = "flex";
+          } else {
+            item2[i].style.display = "none";
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
